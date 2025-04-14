@@ -1,0 +1,75 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: run-oc-mirror
+  namespace: oc-mirror
+  labels:
+    app.kubernetes.io/name: run-oc-mirror
+    app.kubernetes.io/component: oc-mirror-job
+    app.kubernetes.io/part-of: mirror-ocp-content
+spec:
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: run-oc-mirror
+        app.kubernetes.io/component: oc-mirror-job
+        app.kubernetes.io/part-of: mirror-ocp-content
+    spec:
+      restartPolicy: OnFailure
+      serviceAccountName: oc-mirror-sa
+      containers:
+        - name: run-oc-mirror
+          image: registry.redhat.io/openshift4/ose-tools-rhel9:v4.18
+          env:
+            - name: REGISTRY
+              value: image-registry.openshift-image-registry.svc.cluster.local:5000
+            - name: DEST_TLS_VERIFY
+              value: 'false'
+          command:
+            - /bin/bash
+            - -c
+            - |
+              # Download oc-mirror
+              cd /tmp
+              curl https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/latest/oc-mirror.tar.gz -o oc-mirror.tar.gz
+              tar -xzvf oc-mirror.tar.gz
+              chmod +x oc-mirror
+              # Login to registry
+              oc registry login --registry "$REGISTRY" --to=/.docker/destination-registry.json
+
+              # Downloads the Pull secret
+              oc get secret pull-secret -n openshift-config -o jsonpath='{.data.\.dockerconfigjson}' | base64 -d > /tmp/pull-secret.json
+
+              # Combine pull secret and registry auth
+              jq -s 'reduce .[] as $item ({}; .auths += $item.auths)' "/tmp/pull-secret.json" "/.docker/destination-registry.json" > /.docker/config.json
+
+              # Run oc-mirror
+              ./oc-mirror --v2 --config=/tmp/imagesetconfiguration.yaml docker://"$REGISTRY" --dest-tls-verify=$DEST_TLS_VERIFY --max-nested-paths=2 --retry-times 10 --workspace=file:///opt/oc-mirror --cache-dir=file:///opt/oc-mirror --log-level debug
+          volumeMounts:
+            - name: run-oc-mirror-configs
+              mountPath: /tmp/imagesetconfiguration.yaml
+              subPath: imagesetconfiguration.yaml
+            - name: oc-mirror-scratch
+              mountPath: /opt/oc-mirror
+            - name: dot-kube
+              mountPath: /.kube
+            - name: run-containers
+              mountPath: /run/containers
+            - name: docker-dir
+              mountPath: /.docker
+      volumes:
+        - name: run-oc-mirror-configs
+          configMap:
+            name: image-set-configuration
+        - name: oc-mirror-scratch
+          persistentVolumeClaim:
+            claimName: oc-mirror-scratch
+        - name: dot-kube
+          emptyDir:
+            sizeLimit: 100Mi
+        - name: run-containers
+          emptyDir:
+            sizeLimit: 100Mi
+        - name: docker-dir
+          emptyDir:
+            sizeLimit: 100Mi
