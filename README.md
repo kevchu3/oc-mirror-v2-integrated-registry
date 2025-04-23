@@ -10,9 +10,10 @@ The following procedures are designed for an airgapped OpenShift cluster to mirr
 
 ## Instructions
 
-Create a new project and apply the manifests in this repository:
+Create new projects `oc-mirror` for the mirror job and `oc-mirror-images` for the mirrored imagestreams.  Apply the manifests in this repository:
 ```
-oc new-project oc-mirror
+oc new-project oc-mirror         # mirror job
+oc new-project oc-mirror-images  # mirrored imagestreams
 oc apply -f manifests
 ```
 

@@ -23,6 +23,8 @@ spec:
           env:
             - name: REGISTRY
               value: image-registry.openshift-image-registry.svc.cluster.local:5000
+            - name: IMAGESTREAMS_NAMESPACE
+              value: oc-mirror-images
             - name: DEST_TLS_VERIFY
               value: 'false'
           command:
@@ -35,7 +37,7 @@ spec:
               tar -xzvf oc-mirror.tar.gz
               chmod +x oc-mirror
               # Login to registry
-              oc registry login --registry "$REGISTRY" --to=/.docker/destination-registry.json
+              oc registry login --registry ${REGISTRY} --to=/.docker/destination-registry.json
 
               # Downloads the Pull secret
               oc get secret pull-secret -n openshift-config -o jsonpath='{.data.\.dockerconfigjson}' | base64 -d > /tmp/pull-secret.json
@@ -44,7 +46,7 @@ spec:
               jq -s 'reduce .[] as $item ({}; .auths += $item.auths)' "/tmp/pull-secret.json" "/.docker/destination-registry.json" > /.docker/config.json
 
               # Run oc-mirror
-              ./oc-mirror --v2 --config=/tmp/imagesetconfiguration.yaml docker://"$REGISTRY" --dest-tls-verify=$DEST_TLS_VERIFY --max-nested-paths=2 --retry-times 10 --workspace=file:///opt/oc-mirror --cache-dir=file:///opt/oc-mirror --log-level debug
+              ./oc-mirror --v2 --config=/tmp/imagesetconfiguration.yaml docker://${REGISTRY}/${IMAGESTREAMS_NAMESPACE} --dest-tls-verify=${DEST_TLS_VERIFY} --max-nested-paths=2 --retry-times 10 --workspace=file:///opt/oc-mirror --cache-dir=file:///opt/oc-mirror --log-level debug
           volumeMounts:
             - name: run-oc-mirror-configs
               mountPath: /tmp/imagesetconfiguration.yaml
