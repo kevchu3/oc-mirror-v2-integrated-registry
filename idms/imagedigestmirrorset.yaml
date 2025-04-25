@@ -1,0 +1,21 @@
+apiVersion: config.openshift.io/v1
+kind: ImageDigestMirrorSet
+metadata:
+  name: idms-internal-registry
+spec:
+  imageDigestMirrors:
+  - mirrors:
+    - image-registry.openshift-image-registry.svc.cluster.local:5000/openshift/release
+    source: quay.io/openshift-release-dev/ocp-v4.0-art-dev
+  - mirrors:
+    - image-registry.openshift-image-registry.svc.cluster.local:5000/openshift/release-images
+    source: quay.io/openshift-release-dev/ocp-release
+  - mirrors:
+    - image-registry.openshift-image-registry.svc.cluster.local:5000/openshift4
+    source: registry.redhat.io/openshift4
+  - mirrors:
+    - image-registry.openshift-image-registry.svc.cluster.local:5000/container-native-virtualization
+    source: registry.redhat.io/container-native-virtualization
+  - mirrors:
+    - image-registry.openshift-image-registry.svc.cluster.local:5000/migration-toolkit-virtualization
+    source: registry.redhat.io/migration-toolkit-virtualization
