@@ -22,7 +22,11 @@ The oc-mirror v2 binary will mirror images based on an `ImageSetConfiguration` t
 ./oc-mirror list operators --catalog registry.redhat.io/redhat/redhat-operator-index:v4.18
 ```
 
-You can view the [Container Platform Update Graph](https://access.redhat.com/labs/ocpupgradegraph/update_path) and your cluster's OperatorHub to determine specific cluster and operator package target versions to download and update.  As a good practice, you should also include the source (current) cluster and operator package versions, so that if pods must be drained prior to upgrading, they will pull from the internal registry.
+You can view the [Container Platform Update Graph](https://access.redhat.com/labs/ocpupgradegraph/update_path) and your cluster's OperatorHub to determine specific cluster and operator package target versions to download and update.  As a good practice, you should also include the source (current) cluster and operator package versions, so that if pods must be drained prior to upgrading, they will pull from the internal registry.  If you are locking operator packages to a specific version, you can run the following command to determine the minVersion and maxVersion to use:
+
+```
+./oc-mirror list operators --catalog registry.redhat.io/redhat/redhat-operator-index:v4.18 --package=kubevirt-hyperconverged --channel=stable
+```
 
 The OpenShift integrated registry stores images in persistent storage (if configured) in the openshift-image-registry namespace, with references from imagestreams in other namespaces.  It follows a `<registry>/<repository>/<image>[:tag] or [@sha256:digest]` format with a restriction of two levels of nesting and thus oc-mirror must use `--max-nested-paths=2`.  The registry also assumes the repository already exists as an OpenShift namespace prior to pushing images to it.  Thus, the namespaces will need to be created before mirroring.  You can also use the [Red Hat Ecosystem Catalog](https://catalog.redhat.com/software/containers/explore) to determine the source registry and repository paths that will need to be mirrored, replacing the repository path with the OpenShift namespaces that will need to be created.
 
