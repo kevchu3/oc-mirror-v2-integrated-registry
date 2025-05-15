@@ -17,12 +17,12 @@ Prior to mirroring images, the OpenShift integrated registry should be configure
 
 ## Setup
 
-The oc-mirror v2 binary will mirror images based on an `ImageSetConfiguration` to target repositories.  An example [imagesetconfiguration.yaml](manifests/imagesetconfiguration.yaml) has been provided and should be customized based on your mirroring needs.  I've opted to wrap my `ImageSetConfiguration` inside a `ConfigMap` to be mounted to my mirroring job pod.  To determine the operator packages to specify in the `ImageSetConfiguration`, you can download the `oc-mirror` binary and run the following command (replace the tag with your OpenShift version):
+The oc-mirror v2 binary will mirror images based on an `ImageSetConfiguration` to target repositories.  An example [imagesetconfiguration.yaml](manifests/imagesetconfiguration.yaml) has been provided to mirror images for OpenShift 4.17 and 4.18 and should be customized based on your mirroring needs.  I've opted to wrap my `ImageSetConfiguration` inside a `ConfigMap` to be mounted to my mirroring job pod.  To determine the operator packages to specify in the `ImageSetConfiguration`, you can download the `oc-mirror` binary and run the following command (replace the tag with your OpenShift version):
 ```
 ./oc-mirror list operators --catalog registry.redhat.io/redhat/redhat-operator-index:v4.18
 ```
 
-You can view the [Container Platform Update Graph](https://access.redhat.com/labs/ocpupgradegraph/update_path) and your cluster's OperatorHub to determine specific cluster and operator package target versions to download and update.  As a good practice, you should also include the source (current) cluster and operator package versions, so that if pods must be drained prior to upgrading, they will pull from the internal registry.  If you are locking operator packages to a specific version, you can run the following command to determine the minVersion and maxVersion to use:
+You can view the [Container Platform Update Graph](https://access.redhat.com/labs/ocpupgradegraph/update_path) and your cluster's OperatorHub to determine specific cluster and operator package target versions to download and update.  If you are locking operator packages to a specific version, you can run the following command to determine the z-stream versions to use:
 
 ```
 ./oc-mirror list operators --catalog registry.redhat.io/redhat/redhat-operator-index:v4.18 --package=kubevirt-hyperconverged --channel=stable
@@ -84,7 +84,8 @@ If you don't see a command prompt, try pressing enter.
 
 ## Applying ImageDigestMirrorSet
 
-After the content has been mirrored, the ImageDigestMirrorSet can be applied.  An example [imagedigestmirrorset.yaml](idms/imagedigestmirrorset.yaml) has been provided and should be customized.  Applying and updating this manifest will cordon and drain nodes, and I've customized the manifest to be resilient across OpenShift upgrades to reduce the cordon and drain activities.
+After the content has been mirrored, the ImageDigestMirrorSet can be applied.  An example [imagedigestmirrorset.yaml](idms/imagedigestmirrorset.yaml) has been provided and should be customized.  Per the [official documentation](https://docs.redhat.com/en/documentation/openshift_container_platform/4.18/html/images/image-configuration#images-configuration-registry-mirror-configuring_image-configuration):
+> After the object is created, the Machine Config Operator (MCO) drains the nodes for ImageTagMirrorSet objects only. The MCO does not drain the nodes for ImageDigestMirrorSet and ImageContentSourcePolicy objects.
 
 ```
 oc apply -f idms/imagedigestmirrorset.yaml

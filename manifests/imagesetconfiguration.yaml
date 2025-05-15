@@ -15,32 +15,32 @@ data:
         channels:
           - name: stable-4.17
             type: ocp
-            minVersion: 4.17.25
-            maxVersion: 4.17.25
+            minVersion: 4.17.28
+            maxVersion: 4.17.28
           - name: stable-4.18
             type: ocp
-            minVersion: 4.18.9
-            maxVersion: 4.18.9
+            minVersion: 4.18.12
+            maxVersion: 4.18.12
       operators:
         - catalog: registry.redhat.io/redhat/redhat-operator-index:v4.17
           packages:
             - name: kubevirt-hyperconverged
-              minVersion: 4.17.7
-              maxVersion: 4.17.7
+              minVersion: 4.16.3
+              maxVersion: 4.17.11
             - name: local-storage-operator
-              minVersion: 4.17.0-202504092035
-              maxVersion: 4.17.0-202504092035
+              minVersion: 4.17.0-202504281009
+              maxVersion: 4.17.0-202504281009
             - name: kubernetes-nmstate-operator
-              minVersion: 4.17.0-202504141105
-              maxVersion: 4.17.0-202504141105
+              minVersion: 4.17.0-202505060707
+              maxVersion: 4.17.0-202505060707
         - catalog: registry.redhat.io/redhat/redhat-operator-index:v4.18
           packages:
             - name: kubevirt-hyperconverged
-              minVersion: 4.18.2
-              maxVersion: 4.18.2
+              minVersion: 4.17.4
+              maxVersion: 4.18.3
             - name: local-storage-operator
-              minVersion: 4.18.0-202504151633
-              maxVersion: 4.18.0-202504151633
+              minVersion: 4.18.0-202505062100
+              maxVersion: 4.18.0-202505062100
             - name: kubernetes-nmstate-operator
-              minVersion: 4.18.0-202504160308
-              maxVersion: 4.18.0-202504160308
+              minVersion: 4.18.0-202505061007
+              maxVersion: 4.18.0-202505061007
