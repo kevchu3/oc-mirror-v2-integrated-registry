@@ -31,7 +31,7 @@ spec:
             - |
               # Download oc-mirror
               cd /tmp
-              curl https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/latest/oc-mirror.tar.gz -o oc-mirror.tar.gz
+              curl https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/latest/oc-mirror.tar.gz -L -o oc-mirror.tar.gz
               tar -xzvf oc-mirror.tar.gz
               chmod +x oc-mirror
               # Login to registry
