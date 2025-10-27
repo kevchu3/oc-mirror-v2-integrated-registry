@@ -5,7 +5,7 @@
 
 ## Background
 
-The following procedures are designed for an airgapped Red Hat OpenShift cluster to mirror images to the OpenShift integrated registry, to reduce setup time and eliminate network connectivity to an external registry.  Mirroring uses the oc-mirror OpenShift CLI (oc) plugin, which mirrors all required OpenShift Container Platform content and other images to your mirror registry.  We'll use the oc-mirror v2 plugin ([refer to the docs](https://docs.redhat.com/en/documentation/openshift_container_platform/4.18/html/disconnected_environments/mirroring-in-disconnected-environments#about-installing-oc-mirror-v2)) to mirror to the cluster's OpenShift integrated registry, typically available at `image-registry.openshift-image-registry.svc.cluster.local:5000`.
+The following procedures are designed for an airgapped Red Hat OpenShift cluster to mirror images to the OpenShift integrated registry, to reduce setup time and eliminate network connectivity to an external registry.  Mirroring uses the oc-mirror OpenShift CLI (oc) plugin, which mirrors all required OpenShift Container Platform content and other images to your mirror registry.  We'll use the oc-mirror v2 plugin ([refer to the docs](https://docs.redhat.com/en/documentation/openshift_container_platform/4.18/html/disconnected_environments/about-installing-oc-mirror-v2)) to mirror to the cluster's OpenShift integrated registry, typically available at `image-registry.openshift-image-registry.svc.cluster.local:5000`.
 
 # Design
 
